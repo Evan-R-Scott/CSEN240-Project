@@ -14,13 +14,12 @@
 #SBATCH --mail-user=erscott@scu.edu
 #SBATCH --mail-type=END,FAIL
 
-module load Python/3.11.3-GCCcore-12.3.0
+module load Anaconda3/2024.06-1
 
-python -m  venv venv
-source venv/bin/activate
-pip install --upgrade pip
-pip install -r requirements.txt
+conda create -n cenv python=3.11 -y
+source activate cenv
 
+conda install -c conda-forge tensorflow-gpu pandas scikit-learn imbalanced-learn opencv matplotlib seaborn -y
 
 echo "Starting job"
 python main.py 1 #TODO Update argument here based on model to run

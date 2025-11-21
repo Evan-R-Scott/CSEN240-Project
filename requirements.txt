@@ -1,3 +1,4 @@
+# Only for local dev to check correctness -> doesn't install GPU runtime so will use CPU only
 tensorflow
 keras
 pandas
