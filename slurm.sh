@@ -11,7 +11,7 @@
 #SBATCH --ntasks=1
 #SBATCH --gpus=1
 #SBATCH --time=02:00:00
-#SBATCH --mail-user=erscott@scu.edu
+#SBATCH --mail-user=(add email here)
 #SBATCH --mail-type=END,FAIL
 
 module load Anaconda3/2024.06-1
