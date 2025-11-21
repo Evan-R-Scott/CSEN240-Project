@@ -31,7 +31,7 @@ def create_xception_model(input_shape, num_classes=8, learning_rate=1e-4):
 def get_model(input, input_shape):
     model_options = {
         "1": create_xception_model,
-        #TODO Add more models here
+        #TODO List new or variations of models here
     }
 
     if input not in model_options:

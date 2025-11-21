@@ -14,7 +14,7 @@
 #SBATCH --mail-user=erscott@scu.edu
 #SBATCH --mail-type=END,FAIL
 
-module load python/3.11
+module load Python/3.11.3-GCCcore-12.3.0
 
 python -m  venv venv
 source venv/bin/activate
@@ -23,6 +23,6 @@ pip install -r requirements.txt
 
 
 echo "Starting job"
-python main.py 1 # Update argument here based on model to run
+python main.py 1 #TODO Update argument here based on model to run
 echo "Job completed"
 

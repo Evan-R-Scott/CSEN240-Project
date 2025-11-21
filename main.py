@@ -2,8 +2,11 @@ from models import get_model
 from data_pipeline import Preprocessor
 from train_pipeline import TrainPipeline
 import sys
+import tensorflow
 
 def main(): # Test locally with `python main.py <model_input>` ======= python main.py 1
+    print("Num GPUs Available: ", len(tensorflow.config.list_physical_devices('GPU')))
+
     data_path = "train"
     categories = ["Normal","Osteopenia", "Osteoporosis"]
     img_size = (224, 224)
