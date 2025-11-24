@@ -3,7 +3,7 @@
 Add new or variations of models here as funcs.
 """
 
-from tensorflow.keras.applications import Xception
+from tensorflow.keras.applications import Xception, DenseNet201
 from tensorflow.keras.models import Model
 from tensorflow.keras.layers import (Input, GlobalAveragePooling2D, Dense, Dropout, BatchNormalization, GaussianNoise, MultiHeadAttention, Reshape)
 from tensorflow.keras.optimizers import Adam
@@ -28,9 +28,31 @@ def create_xception_model(input_shape, num_classes=8, learning_rate=1e-4):
     optimizer=Adam(learning_rate=learning_rate), loss="sparse_categorical_crossentropy", metrics=["accuracy"])
     return model
 
+def create_dense_model(input_shape, num_classes=8, learning_rate=1e-4):
+    backbone = DenseNet201(
+        weights="imagenet",
+        include_top=False,
+        input_shape=input_shape,
+    )
+    backbone.trainable = False
+
+    x = backbone.output
+    x = GlobalAveragePooling2D(name="Global_Avg_Pooling")(x)
+    x = Dense(512, activation="relu", name="FC_512")(x)
+    x = BatchNormalization(name="Batch_Normalization")(x)
+    x = Dropout(0.25, name="Dropout")(x)
+    outputs = Dense(num_classes, activation="softmax", name="Output_Layer")(x)
+
+    model = Model(inputs=backbone.input, outputs=outputs, name="DenseNet201_with_Classifier")
+    model.compile(
+        optimizer=Adam(learning_rate=learning_rate), loss="sparse_categorical_crossentropy", metrics=["accuracy"])
+    
+    return model
+
 def get_model(input, input_shape):
     model_options = {
         "1": create_xception_model,
+        "2": create_dense_model,  
         #TODO List new or variations of models here
     }
 

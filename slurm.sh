@@ -22,6 +22,6 @@ source activate cenv
 conda install -c conda-forge tensorflow-gpu pandas scikit-learn imbalanced-learn opencv matplotlib seaborn -y
 
 echo "Starting job"
-python main.py 1 #TODO Update argument here based on model to run
+python main.py 2 #TODO Update argument here based on model to run
 echo "Job completed"
 
