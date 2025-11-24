@@ -1,0 +1,9 @@
+# Only for local dev to check correctness -> doesn't install GPU runtime so will use CPU only
+tensorflow
+keras
+pandas
+scikit-learn
+imbalanced-learn
+opencv-python
+matplotlib
+seaborn
