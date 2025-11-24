@@ -15,11 +15,13 @@
 #SBATCH --mail-type=END,FAIL
 
 module load Anaconda3/2024.06-1
+module load CUDA/12.2.1
 
-conda create -n cenv python=3.11 -y
+if [ ! -d "$HOME/.conda/envs/cenv" ]; then
+        conda create -n cenv python=3.11 -y
+        conda install -c conda-forge tensorflow-gpu pandas scikit-learn imbalanced-learn opencv matplotlib seaborn -y
+fi
 source activate cenv
-
-conda install -c conda-forge tensorflow-gpu pandas scikit-learn imbalanced-learn opencv matplotlib seaborn -y
 
 echo "Starting job"
 python main.py 2 #TODO Update argument here based on model to run

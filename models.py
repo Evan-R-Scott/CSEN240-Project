@@ -30,7 +30,7 @@ def create_xception_model(input_shape, num_classes=8, learning_rate=1e-4):
 
 def create_dense_model(input_shape, num_classes=8, learning_rate=1e-4):
     backbone = DenseNet201(
-        weights="imagenet",
+        weights=None,
         include_top=False,
         input_shape=input_shape,
     )
