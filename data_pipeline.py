@@ -12,12 +12,14 @@ class Preprocessor:
         self.label_encoder = None
         self.target_names = None
     
-    def load_data(self):
+    def load_data(self, path):
         image_paths = []
         labels = []
 
+        loc = os.path.join(self.data_path, path)
+
         for category in self.categories:
-            category_path = os.path.join(self.data_path, category)
+            category_path = os.path.join(loc, category)
             for image_name in os.listdir(category_path):
                 image_path = os.path.join(category_path, image_name)
                 image_paths.append(image_path)
@@ -52,28 +54,28 @@ class Preprocessor:
         df_resampled['category_encoded'] = df_resampled['category_encoded'].astype(str)
         return df_resampled
     
-    def split_data(self, df):
-        train_df_new, temp_df_new = train_test_split(
-            df,
-            train_size=0.8,
-            shuffle=True,
-            random_state=42,
-            stratify=df['category_encoded']
-        )
-        print(train_df_new.shape)
-        print(temp_df_new.shape)
+    # def split_data(self, df):
+    #     train_df_new, temp_df_new = train_test_split(
+    #         df,
+    #         train_size=0.8,
+    #         shuffle=True,
+    #         random_state=42,
+    #         stratify=df['category_encoded']
+    #     )
+    #     print(train_df_new.shape)
+    #     print(temp_df_new.shape)
 
-        valid_df_new, test_df_new = train_test_split(
-            temp_df_new,
-            test_size=0.5,
-            shuffle=True,
-            random_state=42,
-            stratify=temp_df_new['category_encoded']
-        )
-        print(valid_df_new.shape)
-        print(test_df_new.shape)
+    #     valid_df_new, test_df_new = train_test_split(
+    #         temp_df_new,
+    #         test_size=0.5,
+    #         shuffle=True,
+    #         random_state=42,
+    #         stratify=temp_df_new['category_encoded']
+    #     )
+    #     print(valid_df_new.shape)
+    #     print(test_df_new.shape)
 
-        return train_df_new, valid_df_new, test_df_new
+    #     return train_df_new, valid_df_new, test_df_new
 
     def create_generators(self, train_df, valid_df, test_df, img_size, batch_size):
         tr_gen = ImageDataGenerator(rescale=1./255)
@@ -116,10 +118,19 @@ class Preprocessor:
         return train_gen_new, valid_gen_new, test_gen_new
     
     def preprocess(self, img_size=(224,224), batch_size=16):
-        df = self.load_data()
+        df = self.load_data("train")
         self.show_data(df)
         df = self.encode_labels(df)
         df = self.balance_data(df)
-        train_df, valid_df, test_df = self.split_data(df)
-        train_gen, valid_gen, test_gen = self.create_generators(train_df, valid_df, test_df, img_size=img_size, batch_size=batch_size)
+        train_df, test_df = train_test_split(
+            df,
+            train_size=0.9,
+            shuffle=True,
+            random_state=42,
+            stratify=df['category_encoded']
+        )
+        val_df = self.load_data("val")
+        val_df = self.encode_labels(val_df)
+
+        train_gen, valid_gen, test_gen = self.create_generators(train_df, val_df, test_df, img_size=img_size, batch_size=batch_size)
         return train_gen, valid_gen, test_gen

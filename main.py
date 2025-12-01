@@ -7,11 +7,11 @@ import tensorflow
 def main(): # Test locally with `python main.py <model_input>` ======= python main.py 1
     print("Num GPUs Available: ", len(tensorflow.config.list_physical_devices('GPU')))
 
-    data_path = "train"
+    data_path = "."
     categories = ["Normal","Osteopenia", "Osteoporosis"]
     img_size = (224, 224)
     batch_size = 16
-    epochs = 20
+    epochs = 50
 
     if len(sys.argv) > 1:
         model_input = sys.argv[1]

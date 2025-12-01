@@ -56,7 +56,7 @@ def create_dense_model(input_shape, num_classes=8, learning_rate=1e-4):
 
 def create_vit_model(input_shape, num_classes=8, learning_rate=1e-4):
     import keras_hub
-    
+
     vit = keras_hub.models.ViTBackbone.from_preset("vit_base_patch16_224_imagenet")
     vit.trainable = False
 
@@ -64,10 +64,17 @@ def create_vit_model(input_shape, num_classes=8, learning_rate=1e-4):
     x = vit(inputs)
     x = x[:, 0, :]
 
+    x = Dense(1024, activation="relu")(x)
+    x = BatchNormalization()(x)
+    x = Dropout(0.4)(x)
+
     x = Dense(512, activation="relu")(x)
-    x = Dropout(0.25)(x)
+    x = BatchNormalization()(x)
+    x = Dropout(0.3)(x)
+
     x = Dense(256, activation="relu")(x)
-    x = Dropout(0.25)(x)
+    x = BatchNormalization()(x)
+    x = Dropout(0.2)(x)
     outputs = Dense(num_classes, activation="softmax")(x)
 
     model = Model(inputs=inputs, outputs=outputs)
