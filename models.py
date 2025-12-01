@@ -7,7 +7,6 @@ from tensorflow.keras.applications import Xception, ResNet50
 from tensorflow.keras.models import Model
 from tensorflow.keras.layers import (Input, GlobalAveragePooling2D, Dense, Dropout, BatchNormalization, GaussianNoise, MultiHeadAttention, Reshape)
 from tensorflow.keras.optimizers import Adam
-import keras_hub
 
 def create_xception_model(input_shape, num_classes=8, learning_rate=1e-4):
     inputs = Input(shape=input_shape, name="Input_Layer")
@@ -31,10 +30,12 @@ def create_xception_model(input_shape, num_classes=8, learning_rate=1e-4):
 
 def create_dense_model(input_shape, num_classes=8, learning_rate=1e-4):
     backbone = ResNet50(
-        weights="imagenet",
+        weights=None,
         include_top=False,
         input_shape=input_shape,
     )
+
+    backbone.load_weights("resnet50_weights.weights.h5")
     
     for layer in backbone.layers[:-20]:
         layer.trainable = False
@@ -54,13 +55,15 @@ def create_dense_model(input_shape, num_classes=8, learning_rate=1e-4):
     return model
 
 def create_vit_model(input_shape, num_classes=8, learning_rate=1e-4):
+    import keras_hub
+    
     vit = keras_hub.models.ViTBackbone.from_preset("vit_base_patch16_224_imagenet")
     vit.trainable = False
 
     inputs = Input(shape=input_shape)
     x = vit(inputs)
     x = x[:, 0, :]
-    
+
     x = Dense(512, activation="relu")(x)
     x = Dropout(0.25)(x)
     x = Dense(256, activation="relu")(x)
