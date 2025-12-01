@@ -19,7 +19,7 @@ module load CUDA/12.2.1
 
 if [ ! -d "$HOME/.conda/envs/cenv" ]; then
         conda create -n cenv python=3.11 -y
-        conda install -c conda-forge tensorflow-gpu pandas scikit-learn imbalanced-learn opencv matplotlib seaborn -y
+        conda install -c conda-forge tensorflow-gpu pandas scikit-learn imbalanced-learn opencv matplotlib seaborn keras-hub keras-core -y
 fi
 source activate cenv
 
