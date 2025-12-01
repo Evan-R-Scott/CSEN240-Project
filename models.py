@@ -28,7 +28,7 @@ def create_xception_model(input_shape, num_classes=8, learning_rate=1e-4):
     optimizer=Adam(learning_rate=learning_rate), loss="sparse_categorical_crossentropy", metrics=["accuracy"])
     return model
 
-def create_dense_model(input_shape, num_classes=8, learning_rate=1e-4):
+def create_resnet_model(input_shape, num_classes=8, learning_rate=1e-4):
     backbone = ResNet50(
         weights=None,
         include_top=False,
@@ -86,7 +86,7 @@ def create_vit_model(input_shape, num_classes=8, learning_rate=1e-4):
 def get_model(input, input_shape):
     model_options = {
         "1": create_xception_model,
-        "2": create_dense_model, 
+        "2": create_resnet_model, 
         "3": create_vit_model, 
         #TODO List new or variations of models here
     }

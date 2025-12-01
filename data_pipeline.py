@@ -78,7 +78,16 @@ class Preprocessor:
     #     return train_df_new, valid_df_new, test_df_new
 
     def create_generators(self, train_df, valid_df, test_df, img_size, batch_size):
-        tr_gen = ImageDataGenerator(rescale=1./255)
+        tr_gen = ImageDataGenerator(
+            rescale=1./255,
+            rotation_range=20,
+            width_shift_range=0.2,
+            height_shift_range=0.2,
+            shear_range=0.15,
+            zoom_range=0.15,
+            horizontal_flip=True,
+            fill_mode="nearest"
+            )
         ts_gen = ImageDataGenerator(rescale=1./255)
         
         train_gen_new = tr_gen.flow_from_dataframe(
