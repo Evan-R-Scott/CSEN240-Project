@@ -19,11 +19,12 @@ module load CUDA/12.2.1
 
 if [ ! -d "$HOME/.conda/envs/cenv" ]; then
         conda create -n cenv python=3.11 -y
-        conda install -c conda-forge tensorflow-gpu pandas scikit-learn imbalanced-learn opencv matplotlib seaborn keras-hub keras-core -y
+        conda install -c conda-forge tensorflow-gpu pandas scikit-learn imbalanced-learn opencv matplotlib seaborn -y
 fi
 source activate cenv
+pip install keras-hub keras-core
 
 echo "Starting job"
-python main.py 2 #TODO Update argument here based on model to run
+python main.py 3 #TODO Update argument here based on model to run
 echo "Job completed"
 
