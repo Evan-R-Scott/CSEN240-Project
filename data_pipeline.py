@@ -131,6 +131,7 @@ class Preprocessor:
         )
         val_df = self.load_data("val")
         val_df = self.encode_labels(val_df)
+        val_df['category_encoded'] = val_df['category_encoded'].astype(str)
 
         train_gen, valid_gen, test_gen = self.create_generators(train_df, val_df, test_df, img_size=img_size, batch_size=batch_size)
         return train_gen, valid_gen, test_gen
