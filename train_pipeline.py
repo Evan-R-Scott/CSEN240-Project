@@ -1,4 +1,4 @@
-from tensorflow.keras.callbacks import EarlyStopping
+from tensorflow.keras.callbacks import EarlyStopping, ReduceLROnPlateau
 import tensorflow as tf
 import numpy as np
 from sklearn.metrics import confusion_matrix, classification_report
@@ -13,13 +13,16 @@ class TrainPipeline:
         self.model = model
     
     def train(self, train_gen, valid_gen, epochs=20):
-        early_stopping = EarlyStopping(monitor='val_loss', patience=5,
+        early_stopping = EarlyStopping(monitor='val_loss', patience=8,
             restore_best_weights=True)
+        
+        lr_handler = ReduceLROnPlateau(monitor='val_loss', factor=0.5,
+            patience=4, min_lr=1e-7, verbose=1)
 
         history = self.model.fit( train_gen,
                     validation_data=valid_gen,
                     epochs=epochs,
-                    callbacks=[early_stopping],
+                    callbacks=[early_stopping, lr_handler],
                     verbose=1)
         y_pred = self.model.predict(valid_gen)
         y_true = valid_gen.labels
