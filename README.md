@@ -5,10 +5,11 @@ Doesn't download the modelfile so right now it is a run-and-done workflow. Not s
 1. ssh (your SCU username)@login.wave.scu.edu
 2. git clone https://github.com/Evan-R-Scott/CSEN240-Project.git
 3. cd CSEN240-Project/
-4. sbatch slurm.sh
+4. `sbatch single_slurm.sh` to run 1 model || `sbatch ensemble_slurm.sh` to run ensemble of models
 
 Check progress using commands like:
-  1. squeue
-  2. squeue -u (username)
-  3. tail -f csen240_project.err
-  4. tail -f csen240_project.log -> Best
+
+1. squeue
+2. squeue -u (username)
+3. tail -f csen240_project.err
+4. tail -f csen240_project.log -> Best
