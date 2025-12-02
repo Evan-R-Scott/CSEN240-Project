@@ -3,7 +3,7 @@
 Add new or variations of models here as funcs.
 """
 
-from tensorflow.keras.applications import Xception, ResNet50, DenseNet121
+from tensorflow.keras.applications import Xception, ResNet50, DenseNet121, EfficientNetB0
 from tensorflow.keras.models import Model
 from tensorflow.keras.layers import (Input, GlobalAveragePooling2D, Dense, Dropout, BatchNormalization, GaussianNoise, MultiHeadAttention, Reshape)
 from tensorflow.keras.optimizers import Adam
@@ -31,28 +31,46 @@ def create_xception_model(input_shape, num_classes=8, learning_rate=1e-4):
     return model
 
 def create_resnet_model(input_shape, num_classes=3, learning_rate=1e-4):
-    backbone = ResNet50(
+    inputs = Input(shape=input_shape)
+    base_model = ResNet50(
         weights=None,
         include_top=False,
-        input_shape=input_shape,
+        input_tensor=inputs
     )
 
-    backbone.load_weights("resnet50_weights.weights.h5")
+    base_model.load_weights("pretrained_weights/resnet50_weights.weights.h5")
     
-    for layer in backbone.layers[:-20]:
+    num_layers = len(base_model.layers)
+    for layer in base_model.layers[:-int(num_layers * 0.05)]:
         layer.trainable = False
 
-    x = backbone.output
+    x = base_model.output
     x = GlobalAveragePooling2D()(x)
-    x = Dense(1024, activation="relu")(x)
+    x = BatchNormalization()(x)
+
+    x = Dense(512, activation="relu", kernel_regularizer=l2(5e-4))(x)
+    x = BatchNormalization()(x)
+    x = Dropout(0.6)(x)
+
+    x = Dense(256, activation="relu", kernel_regularizer=l2(5e-4))(x)
+    x = BatchNormalization()(x)
     x = Dropout(0.5)(x)
-    x = Dense(512, activation="relu")(x)
-    x = Dropout(0.25)(x)
+
+    x = Dense(128, activation="relu", kernel_regularizer=l2(5e-4))(x)
+    x = BatchNormalization()(x)
+    x = Dropout(0.4)(x)
+
+    focal_loss = CategoricalFocalCrossentropy(gamma=2.0, alpha=0.25)
+
     outputs = Dense(num_classes, activation="softmax")(x)
 
-    model = Model(inputs=backbone.input, outputs=outputs)
+    model = Model(inputs=inputs, outputs=outputs)
+    # model.compile(
+    #     optimizer=Adam(learning_rate=learning_rate), loss="sparse_categorical_crossentropy", metrics=["accuracy"])
+    
     model.compile(
-        optimizer=Adam(learning_rate=learning_rate), loss="sparse_categorical_crossentropy", metrics=["accuracy"])
+        optimizer=Adam(learning_rate=learning_rate), loss=focal_loss, metrics=["accuracy"]
+    )
     
     return model
 
@@ -93,7 +111,7 @@ def create_vit_model(input_shape, num_classes=3, learning_rate=5e-5):
 def create_densenet_model(input_shape, num_classes=3, learning_rate=1e-4):
     inputs = Input(shape=input_shape)
     base_model = DenseNet121(weights=None, include_top=False, input_tensor=inputs)
-    base_model.load_weights("densenet121_weights.weights.h5")
+    base_model.load_weights("pretrained_weights/densenet121_weights.weights.h5")
 
     num_layers = len(base_model.layers)
     for layer in base_model.layers[:-int(num_layers * 0.05)]:
@@ -103,9 +121,9 @@ def create_densenet_model(input_shape, num_classes=3, learning_rate=1e-4):
     x = GlobalAveragePooling2D()(x)
     x = BatchNormalization()(x)
 
-    x = Dense(256, activation="relu", kernel_regularizer=l2(5e-4))(x)
-    x = BatchNormalization()(x)
-    x = Dropout(0.6)(x)
+    # x = Dense(256, activation="relu", kernel_regularizer=l2(5e-4))(x)
+    # x = BatchNormalization()(x)
+    # x = Dropout(0.5)(x)
 
     x = Dense(128, activation="relu", kernel_regularizer=l2(5e-4))(x)
     x = BatchNormalization()(x)
@@ -128,12 +146,52 @@ def create_densenet_model(input_shape, num_classes=3, learning_rate=1e-4):
     )
     return model
 
+def create_efficientnet_model(input_shape, num_classes=3, learning_rate=1e-4):
+
+    inputs = Input(shape=input_shape)
+    base_model = EfficientNetB0(weights=None, include_top=False, input_tensor=inputs)
+    base_model.load_weights("pretrained_weights/efficientnetb0_weights.weights.h5")
+
+    num_layers = len(base_model.layers)
+    for layer in base_model.layers[:-int(num_layers * 0.05)]:
+        layer.trainable = False
+
+    x = base_model.output
+    x = GlobalAveragePooling2D()(x)
+    x = BatchNormalization()(x)
+
+    x = Dense(256, activation="relu", kernel_regularizer=l2(5e-4))(x)
+    x = BatchNormalization()(x)
+    x = Dropout(0.5)(x)
+
+    x = Dense(128, activation="relu", kernel_regularizer=l2(5e-4))(x)
+    x = BatchNormalization()(x)
+    x = Dropout(0.4)(x)
+
+    # x = Dense(64, activation="relu", kernel_regularizer=l2(5e-4))(x)
+    # x = BatchNormalization()(x)
+    # x = Dropout(0.4)(x)
+
+    outputs = Dense(num_classes, activation="softmax")(x)
+
+    focal_loss = CategoricalFocalCrossentropy(gamma=2.0, alpha=0.25)
+
+    model = Model(inputs=inputs, outputs=outputs)
+    # model.compile(
+    #     optimizer=Adam(learning_rate=learning_rate), loss="sparse_categorical_crossentropy", metrics=["accuracy"]
+    # )
+    model.compile(
+        optimizer=Adam(learning_rate=learning_rate), loss=focal_loss, metrics=["accuracy"]
+    )
+    return model
+
 def get_model(input, input_shape):
     model_options = {
         "1": create_xception_model,
         "2": create_resnet_model, 
         "3": create_vit_model, 
         "4": create_densenet_model,
+        "5": create_efficientnet_model,
         #TODO List new or variations of models here
     }
 
