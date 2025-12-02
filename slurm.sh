@@ -25,6 +25,6 @@ source activate cenv
 pip install keras-hub keras-core
 
 echo "Starting job"
-python main.py 3 #TODO Update argument here based on model to run
+python main.py 4 #TODO Update argument here based on model to run
 echo "Job completed"
 

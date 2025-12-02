@@ -3,7 +3,7 @@
 Add new or variations of models here as funcs.
 """
 
-from tensorflow.keras.applications import Xception, ResNet50
+from tensorflow.keras.applications import Xception, ResNet50, DenseNet121
 from tensorflow.keras.models import Model
 from tensorflow.keras.layers import (Input, GlobalAveragePooling2D, Dense, Dropout, BatchNormalization, GaussianNoise, MultiHeadAttention, Reshape)
 from tensorflow.keras.optimizers import Adam
@@ -83,11 +83,40 @@ def create_vit_model(input_shape, num_classes=8, learning_rate=1e-4):
     )
     return model
 
+def create_densenet_model(input_shape, num_classes=8, learning_rate=1e-4):
+    inputs = Input(shape=input_shape)
+    base_model = DenseNet121(weights=None, include_top=False, input_tensor=inputs)
+    base_model.load_weights("densenet121_weights.weights.h5")
+
+    for layer in base_model.layers[:-30]:
+        layer.trainable = False
+
+    x = base_model.output
+    x = GlobalAveragePooling2D()(x)
+    x = BatchNormalization()(x)
+
+    x = Dense(512, activation="relu")(x)
+    x = BatchNormalization()(x)
+    x = Dropout(0.3)(x)
+
+    x = Dense(256, activation="relu")(x)
+    x = BatchNormalization()(x)
+    x = Dropout(0.2)(x)
+
+    outputs = Dense(num_classes, activation="softmax")(x)
+
+    model = Model(inputs=inputs, outputs=outputs)
+    model.compile(
+        optimizer=Adam(learning_rate=learning_rate), loss="sparse_categorical_crossentropy", metrics=["accuracy"]
+    )
+    return model
+
 def get_model(input, input_shape):
     model_options = {
         "1": create_xception_model,
         "2": create_resnet_model, 
         "3": create_vit_model, 
+        "4": create_densenet_model,
         #TODO List new or variations of models here
     }
 
