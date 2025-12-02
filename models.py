@@ -7,6 +7,7 @@ from tensorflow.keras.applications import Xception, ResNet50, DenseNet121
 from tensorflow.keras.models import Model
 from tensorflow.keras.layers import (Input, GlobalAveragePooling2D, Dense, Dropout, BatchNormalization, GaussianNoise, MultiHeadAttention, Reshape)
 from tensorflow.keras.optimizers import Adam
+from tensorflow.keras.regularizers import l2
 
 def create_xception_model(input_shape, num_classes=8, learning_rate=1e-4):
     inputs = Input(shape=input_shape, name="Input_Layer")
@@ -54,11 +55,16 @@ def create_resnet_model(input_shape, num_classes=8, learning_rate=1e-4):
     
     return model
 
-def create_vit_model(input_shape, num_classes=8, learning_rate=1e-4):
+def create_vit_model(input_shape, num_classes=8, learning_rate=5e-5):
     import keras_hub
 
-    vit = keras_hub.models.ViTBackbone.from_preset("vit_base_patch16_224_imagenet")
-    vit.trainable = False
+    vit = keras_hub.models.ViTBackbone.from_preset("vit_large_patch16_224_imagenet ")
+    # vit_base_patch16_224_imagenet
+    # vit.trainable = False
+
+    for i, layer in enumerate(vit.layers):
+        if i < len(vit.layers) * 0.5:
+            layer.trainable = False
 
     inputs = Input(shape=input_shape)
     x = vit(inputs)
@@ -66,15 +72,15 @@ def create_vit_model(input_shape, num_classes=8, learning_rate=1e-4):
 
     x = Dense(1024, activation="relu")(x)
     x = BatchNormalization()(x)
-    x = Dropout(0.4)(x)
+    x = Dropout(0.2)(x)
 
     x = Dense(512, activation="relu")(x)
     x = BatchNormalization()(x)
-    x = Dropout(0.3)(x)
+    x = Dropout(0.15)(x)
 
     x = Dense(256, activation="relu")(x)
     x = BatchNormalization()(x)
-    x = Dropout(0.2)(x)
+    x = Dropout(0.1)(x)
     outputs = Dense(num_classes, activation="softmax")(x)
 
     model = Model(inputs=inputs, outputs=outputs)
@@ -88,20 +94,20 @@ def create_densenet_model(input_shape, num_classes=8, learning_rate=1e-4):
     base_model = DenseNet121(weights=None, include_top=False, input_tensor=inputs)
     base_model.load_weights("densenet121_weights.weights.h5")
 
-    for layer in base_model.layers[:-30]:
+    for layer in base_model.layers[:-10]:
         layer.trainable = False
 
     x = base_model.output
     x = GlobalAveragePooling2D()(x)
     x = BatchNormalization()(x)
 
-    x = Dense(512, activation="relu")(x)
+    x = Dense(512, activation="relu", kernel_regularizer=l2(1e-4))(x)
     x = BatchNormalization()(x)
-    x = Dropout(0.3)(x)
+    x = Dropout(0.5)(x)
 
-    x = Dense(256, activation="relu")(x)
+    x = Dense(256, activation="relu", kernel_regularizer=l2(1e-4))(x)
     x = BatchNormalization()(x)
-    x = Dropout(0.2)(x)
+    x = Dropout(0.4)(x)
 
     outputs = Dense(num_classes, activation="softmax")(x)
 

@@ -11,7 +11,7 @@ def main(): # Test locally with `python main.py <model_input>` ======= python ma
     categories = ["Normal","Osteopenia", "Osteoporosis"]
     img_size = (224, 224)
     batch_size = 16
-    epochs = 50
+    epochs = 100
 
     if len(sys.argv) > 1:
         model_input = sys.argv[1]
