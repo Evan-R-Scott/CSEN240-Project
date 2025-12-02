@@ -1,4 +1,10 @@
-# Only for local dev to check correctness -> doesn't install GPU runtime so will use CPU only
+# Only for local dev to check syntax correctness -> doesn't install GPU runtime so will use CPU only
+
+##########################################################################
+
+### Don't use this if running on HPC just sbatch one of the shell scripts ###
+
+##########################################################################
 tensorflow
 keras
 pandas
@@ -7,3 +13,5 @@ imbalanced-learn
 opencv-python
 matplotlib
 seaborn
+keras-hub
+keras-core
