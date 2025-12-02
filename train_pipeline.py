@@ -13,11 +13,11 @@ class TrainPipeline:
         self.model = model
     
     def train(self, train_gen, valid_gen, epochs=20):
-        early_stopping = EarlyStopping(monitor='val_loss', patience=15,
+        early_stopping = EarlyStopping(monitor='val_loss', patience=20,
             restore_best_weights=True)
         
         lr_handler = ReduceLROnPlateau(monitor='val_loss', factor=0.5,
-            patience=4, min_lr=1e-7, verbose=1)
+            patience=5, min_lr=5e-6, verbose=1)
 
         history = self.model.fit( train_gen,
                     validation_data=valid_gen,

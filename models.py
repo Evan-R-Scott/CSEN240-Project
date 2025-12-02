@@ -58,7 +58,7 @@ def create_resnet_model(input_shape, num_classes=8, learning_rate=1e-4):
 def create_vit_model(input_shape, num_classes=8, learning_rate=5e-5):
     import keras_hub
 
-    vit = keras_hub.models.ViTBackbone.from_preset("vit_large_patch16_224_imagenet ")
+    vit = keras_hub.models.ViTBackbone.from_preset("vit_large_patch16_224_imagenet")
     # vit_base_patch16_224_imagenet
     # vit.trainable = False
 
@@ -94,18 +94,23 @@ def create_densenet_model(input_shape, num_classes=8, learning_rate=1e-4):
     base_model = DenseNet121(weights=None, include_top=False, input_tensor=inputs)
     base_model.load_weights("densenet121_weights.weights.h5")
 
-    for layer in base_model.layers[:-10]:
+    num_layers = len(base_model.layers)
+    for layer in base_model.layers[:-int(num_layers * 0.05)]:
         layer.trainable = False
 
     x = base_model.output
     x = GlobalAveragePooling2D()(x)
     x = BatchNormalization()(x)
 
-    x = Dense(512, activation="relu", kernel_regularizer=l2(1e-4))(x)
+    x = Dense(256, activation="relu", kernel_regularizer=l2(5e-4))(x)
+    x = BatchNormalization()(x)
+    x = Dropout(0.6)(x)
+
+    x = Dense(128, activation="relu", kernel_regularizer=l2(5e-4))(x)
     x = BatchNormalization()(x)
     x = Dropout(0.5)(x)
 
-    x = Dense(256, activation="relu", kernel_regularizer=l2(1e-4))(x)
+    x = Dense(64, activation="relu", kernel_regularizer=l2(5e-4))(x)
     x = BatchNormalization()(x)
     x = Dropout(0.4)(x)
 
