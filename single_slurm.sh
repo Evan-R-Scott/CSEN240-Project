@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# SLURM job config for the HPC cluster
+# SLURM job config for individual model training on the HPC cluster
 
 
 #SBATCH --job-name=csen240_project
@@ -25,6 +25,6 @@ source activate cenv
 pip install keras-hub keras-core
 
 echo "Starting job"
-python main.py 4 #TODO Update argument here based on model to run
+python main_individual_model.py 4 #TODO Update argument here based on model to run
 echo "Job completed"
 
