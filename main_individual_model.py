@@ -4,7 +4,7 @@ from train_pipeline import TrainPipeline
 import sys
 import tensorflow
 
-def main(): # Test locally with `python main.py <model_input>` ======= python main.py 1
+def main(): # Test locally with `python main_individual_model.py <model_input_number>`
     print("Num GPUs Available: ", len(tensorflow.config.list_physical_devices('GPU')))
 
     data_path = "."
