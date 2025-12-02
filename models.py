@@ -8,6 +8,7 @@ from tensorflow.keras.models import Model
 from tensorflow.keras.layers import (Input, GlobalAveragePooling2D, Dense, Dropout, BatchNormalization, GaussianNoise, MultiHeadAttention, Reshape)
 from tensorflow.keras.optimizers import Adam
 from tensorflow.keras.regularizers import l2
+from tensorflow.keras.losses import CategoricalFocalCrossentropy
 
 def create_xception_model(input_shape, num_classes=8, learning_rate=1e-4):
     inputs = Input(shape=input_shape, name="Input_Layer")
@@ -116,9 +117,14 @@ def create_densenet_model(input_shape, num_classes=3, learning_rate=1e-4):
 
     outputs = Dense(num_classes, activation="softmax")(x)
 
+    focal_loss = CategoricalFocalCrossentropy(gamma=2.0, alpha=0.25)
+
     model = Model(inputs=inputs, outputs=outputs)
+    # model.compile(
+    #     optimizer=Adam(learning_rate=learning_rate), loss="sparse_categorical_crossentropy", metrics=["accuracy"]
+    # )
     model.compile(
-        optimizer=Adam(learning_rate=learning_rate), loss="sparse_categorical_crossentropy", metrics=["accuracy"]
+        optimizer=Adam(learning_rate=learning_rate), loss=focal_loss, metrics=["accuracy"]
     )
     return model
 

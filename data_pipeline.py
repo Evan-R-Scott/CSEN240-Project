@@ -8,6 +8,7 @@ from tensorflow.keras.preprocessing.image import ImageDataGenerator
 import cv2
 
 def clahe(img):
+    img = img.astype(np.uint8)
     # CLAHE
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     clahe = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(8, 8))
@@ -114,7 +115,8 @@ class Preprocessor:
             x_col='image_path',
             y_col='category_encoded',
             target_size=img_size,
-            class_mode='sparse',
+            # class_mode='sparse',
+            class_mode='categorical',
             color_mode='rgb',
             shuffle=True,
             batch_size=batch_size
@@ -125,7 +127,8 @@ class Preprocessor:
             x_col='image_path',
             y_col='category_encoded',
             target_size=img_size,
-            class_mode='sparse',
+            # class_mode='sparse',
+            class_mode='categorical',
             color_mode='rgb',
             shuffle=True,
             batch_size=batch_size
@@ -136,7 +139,8 @@ class Preprocessor:
             x_col='image_path',
             y_col='category_encoded',
             target_size=img_size,
-            class_mode='sparse',
+            # class_mode='sparse',
+            class_mode='categorical',
             color_mode='rgb',
             shuffle=False,
             batch_size=batch_size
