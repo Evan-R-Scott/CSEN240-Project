@@ -29,7 +29,7 @@ def create_xception_model(input_shape, num_classes=8, learning_rate=1e-4):
     optimizer=Adam(learning_rate=learning_rate), loss="sparse_categorical_crossentropy", metrics=["accuracy"])
     return model
 
-def create_resnet_model(input_shape, num_classes=8, learning_rate=1e-4):
+def create_resnet_model(input_shape, num_classes=3, learning_rate=1e-4):
     backbone = ResNet50(
         weights=None,
         include_top=False,
@@ -55,7 +55,7 @@ def create_resnet_model(input_shape, num_classes=8, learning_rate=1e-4):
     
     return model
 
-def create_vit_model(input_shape, num_classes=8, learning_rate=5e-5):
+def create_vit_model(input_shape, num_classes=3, learning_rate=5e-5):
     import keras_hub
 
     vit = keras_hub.models.ViTBackbone.from_preset("vit_large_patch16_224_imagenet")
@@ -89,7 +89,7 @@ def create_vit_model(input_shape, num_classes=8, learning_rate=5e-5):
     )
     return model
 
-def create_densenet_model(input_shape, num_classes=8, learning_rate=1e-4):
+def create_densenet_model(input_shape, num_classes=3, learning_rate=1e-4):
     inputs = Input(shape=input_shape)
     base_model = DenseNet121(weights=None, include_top=False, input_tensor=inputs)
     base_model.load_weights("densenet121_weights.weights.h5")
