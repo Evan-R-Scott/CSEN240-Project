@@ -5,8 +5,8 @@ Add new or variations of models here as funcs.
 
 from tensorflow.keras.applications import Xception, ResNet50, DenseNet121, EfficientNetB0
 from tensorflow.keras.models import Model
-from tensorflow.keras.layers import (Input, GlobalAveragePooling2D, Dense, Dropout, BatchNormalization, GaussianNoise, MultiHeadAttention, Reshape)
-from tensorflow.keras.optimizers import Adam
+from tensorflow.keras.layers import (Input, GlobalAveragePooling2D, Dense, Dropout, BatchNormalization, GaussianNoise, MultiHeadAttention, Reshape, LayerNormalization)
+from tensorflow.keras.optimizers import Adam, AdamW
 from tensorflow.keras.regularizers import l2
 from tensorflow.keras.losses import CategoricalFocalCrossentropy, SparseCategoricalCrossentropy
 
@@ -86,27 +86,27 @@ def create_vit_model(input_shape, num_classes=3, learning_rate=5e-5):
     # vit.trainable = False
 
     for i, layer in enumerate(vit.layers):
-        if i < len(vit.layers) * 0.5:
+        if i < len(vit.layers) * 0.8:
             layer.trainable = False
 
     inputs = Input(shape=input_shape)
     x = vit(inputs)
     x = x[:, 0, :]
+    
+    x = LayerNormalization(epsilon=1e-6)(x)
+    x = Dense(256, activation="gelu")(x)
+    x = Dropout(0.3)(x)
 
-    x = Dense(512, activation="relu")(x)
-    x = BatchNormalization()(x)
-    x = Dropout(0.2)(x)
-
-    x = Dense(256, activation="relu")(x)
-    x = BatchNormalization()(x)
-    x = Dropout(0.15)(x)
+    x = LayerNormalization(epsilon=1e-6)(x)
+    x = Dense(128, activation="gelu")(x)
+    x = Dropout(0.3)(x)
 
     outputs = Dense(num_classes, activation="softmax")(x)
 
 
     model = Model(inputs=inputs, outputs=outputs)
     model.compile(
-        optimizer=Adam(learning_rate=learning_rate), loss="sparse_categorical_crossentropy", metrics=["accuracy"]
+        optimizer=AdamW(learning_rate=learning_rate, weight_decay=1e-4), loss="sparse_categorical_crossentropy", metrics=["accuracy"]
     )
     return model
 

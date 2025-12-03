@@ -93,16 +93,16 @@ class Preprocessor:
         # ts_gen = ImageDataGenerator(rescale=1./255)
         # tr_gen = ImageDataGenerator(preprocessing_function=clahe)
         # ts_gen = ImageDataGenerator(preprocessing_function=clahe)
-        # tr_gen = ImageDataGenerator(rescale=1./255)
-        tr_gen = ImageDataGenerator(
-            rescale=1./255,
-            rotation_range=15,
-            width_shift_range=0.1,
-            height_shift_range=0.1,
-            zoom_range=0.15,
-            brightness_range=[0.8, 1.2],
-            horizontal_flip=True,
-        )
+        tr_gen = ImageDataGenerator(rescale=1./255)
+        # tr_gen = ImageDataGenerator(
+        #     rescale=1./255,
+        #     rotation_range=15,
+        #     width_shift_range=0.1,
+        #     height_shift_range=0.1,
+        #     zoom_range=0.15,
+        #     brightness_range=[0.8, 1.2],
+        #     horizontal_flip=True,
+        # )
         ts_gen = ImageDataGenerator(rescale=1./255)
         
         train_gen_new = tr_gen.flow_from_dataframe(
@@ -158,7 +158,9 @@ class Preprocessor:
         )
         val_df = self.load_data("val")
         val_df = self.encode_labels(val_df)
+        train_df['category_encoded'] = train_df['category_encoded'].astype(str)
         val_df['category_encoded'] = val_df['category_encoded'].astype(str)
+        test_df['category_encoded'] = test_df['category_encoded'].astype(str)
 
         train_gen, valid_gen, test_gen = self.create_generators(train_df, val_df, test_df, img_size=img_size, batch_size=batch_size)
         return train_gen, valid_gen, test_gen
