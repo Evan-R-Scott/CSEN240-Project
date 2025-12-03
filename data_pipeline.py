@@ -107,8 +107,10 @@ class Preprocessor:
         #     )
         # tr_gen = ImageDataGenerator(rescale=1./255)
         # ts_gen = ImageDataGenerator(rescale=1./255)
-        tr_gen = ImageDataGenerator(preprocessing_function=clahe)
-        ts_gen = ImageDataGenerator(preprocessing_function=clahe)
+        # tr_gen = ImageDataGenerator(preprocessing_function=clahe)
+        # ts_gen = ImageDataGenerator(preprocessing_function=clahe)
+        tr_gen = ImageDataGenerator(rescale=1./255)
+        ts_gen = ImageDataGenerator(rescale=1./255)
         
         train_gen_new = tr_gen.flow_from_dataframe(
             train_df,
