@@ -6,7 +6,6 @@ from imblearn.over_sampling import RandomOverSampler
 from sklearn.model_selection import train_test_split
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 
-
 class Preprocessor:
     def __init__(self, path , categories):
         self.data_path = path

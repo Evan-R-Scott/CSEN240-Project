@@ -116,27 +116,27 @@ def create_densenet_model(input_shape, num_classes=3, learning_rate=5e-5):
     base_model.load_weights("pretrained_weights/densenet121_weights.weights.h5")
 
     num_layers = len(base_model.layers)
-    end = int(num_layers * 0.95)
+    end = int(num_layers * 0.5)
     for layer in base_model.layers[:end]:
         layer.trainable = False
 
     x = base_model.output
     x = GlobalAveragePooling2D()(x)
     x = BatchNormalization()(x)
-    x = Dropout(0.3)(x)
+    x = Dropout(0.4)(x)
     # x = GaussianNoise(0.15)(x)
 
-    # x = Dense(512, activation="relu", kernel_regularizer=l2(1e-4))(x)
-    # x = BatchNormalization()(x)
-    # x = Dropout(0.25)(x)
+    x = Dense(512, activation="relu")(x)
+    x = BatchNormalization()(x)
+    x = Dropout(0.4)(x)
 
     # x = Dense(256, activation="relu", kernel_regularizer=l2(1e-3))(x)
     # x = BatchNormalization()(x)
     # x = Dropout(0.4)(x)
 
-    x = Dense(128, activation="relu", kernel_regularizer=l2(1e-3))(x)
+    x = Dense(128, activation="relu")(x)
     x = BatchNormalization()(x)
-    x = Dropout(0.4)(x)
+    x = Dropout(0.5)(x)
 
     # x = BatchNormalization()(x)
     outputs = Dense(num_classes, activation="softmax")(x)
