@@ -62,7 +62,7 @@ def create_resnet_model(input_shape, num_classes=3, learning_rate=1e-4):
     x = Dropout(0.4)(x)
 
     # focal_loss = CategoricalFocalCrossentropy(gamma=2.0, alpha=0.25)
-    loss = SparseCategoricalCrossentropy(label_smoothing=0.1)
+    loss = SparseCategoricalCrossentropy()
 
     x = BatchNormalization()(x)
     outputs = Dense(num_classes, activation="softmax")(x)
@@ -106,7 +106,7 @@ def create_vit_model(input_shape, num_classes=3, learning_rate=5e-5):
     x = Dropout(0.1)(x)
     outputs = Dense(num_classes, activation="softmax")(x)
 
-    loss = SparseCategoricalCrossentropy(label_smoothing=0.1)
+    loss = SparseCategoricalCrossentropy()
 
     model = Model(inputs=inputs, outputs=outputs)
     model.compile(
@@ -145,7 +145,7 @@ def create_densenet_model(input_shape, num_classes=3, learning_rate=1e-4):
     outputs = Dense(num_classes, activation="softmax")(x)
 
     # focal_loss = CategoricalFocalCrossentropy(gamma=2.0, alpha=0.25)
-    loss = SparseCategoricalCrossentropy(label_smoothing=0.1)
+    loss = SparseCategoricalCrossentropy()
 
     model = Model(inputs=inputs, outputs=outputs)
     model.compile(
@@ -187,7 +187,7 @@ def create_efficientnet_model(input_shape, num_classes=3, learning_rate=1e-4):
     outputs = Dense(num_classes, activation="softmax")(x)
 
     # focal_loss = CategoricalFocalCrossentropy(gamma=2.0, alpha=0.25)
-    loss = SparseCategoricalCrossentropy(label_smoothing=0.1)
+    loss = SparseCategoricalCrossentropy()
 
     model = Model(inputs=inputs, outputs=outputs)
     model.compile(
