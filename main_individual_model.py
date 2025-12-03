@@ -10,7 +10,7 @@ def main(): # Test locally with `python main_individual_model.py <model_input_nu
     data_path = "."
     categories = ["Normal","Osteopenia", "Osteoporosis"]
     img_size = (224, 224)
-    batch_size = 16
+    batch_size = 32
     epochs = 100
 
     if len(sys.argv) > 1:
