@@ -30,7 +30,7 @@ def create_xception_model(input_shape, num_classes=8, learning_rate=1e-4):
     optimizer=Adam(learning_rate=learning_rate), loss="sparse_categorical_crossentropy", metrics=["accuracy"])
     return model
 
-def create_resnet_model(input_shape, num_classes=3, learning_rate=1e-4):
+def create_resnet_model(input_shape, num_classes=3, learning_rate=5e-5):
     inputs = Input(shape=input_shape)
     base_model = ResNet50(
         weights=None,
@@ -41,23 +41,23 @@ def create_resnet_model(input_shape, num_classes=3, learning_rate=1e-4):
     base_model.load_weights("pretrained_weights/resnet50_weights.weights.h5")
     
     num_layers = len(base_model.layers)
-    end = int(num_layers * 0.8)
+    end = int(num_layers * 0.7)
     for layer in base_model.layers[:end]:
         layer.trainable = False
 
     x = base_model.output
     x = GlobalAveragePooling2D()(x)
     x = BatchNormalization()(x)
-    x = Dropout(0.2)(x)
+    x = Dropout(0.15)(x)
     # x = GaussianNoise(0.15)(x)
 
     x = Dense(512, activation="relu", kernel_regularizer=l2(1e-4))(x)
     x = BatchNormalization()(x)
-    x = Dropout(0.3)(x)
+    x = Dropout(0.25)(x)
 
-    x = Dense(256, activation="relu", kernel_regularizer=l2(1e-4))(x)
-    x = BatchNormalization()(x)
-    x = Dropout(0.2)(x)
+    # x = Dense(256, activation="relu", kernel_regularizer=l2(1e-4))(x)
+    # x = BatchNormalization()(x)
+    # x = Dropout(0.2)(x)
 
     # x = Dense(128, activation="relu", kernel_regularizer=l2(1e-4))(x)
     # x = BatchNormalization()(x)
@@ -110,29 +110,29 @@ def create_vit_model(input_shape, num_classes=3, learning_rate=5e-5):
     )
     return model
 
-def create_densenet_model(input_shape, num_classes=3, learning_rate=1e-4):
+def create_densenet_model(input_shape, num_classes=3, learning_rate=5e-5):
     inputs = Input(shape=input_shape)
     base_model = DenseNet121(weights=None, include_top=False, input_tensor=inputs)
     base_model.load_weights("pretrained_weights/densenet121_weights.weights.h5")
 
     num_layers = len(base_model.layers)
-    end = int(num_layers * 0.8)
+    end = int(num_layers * 0.7)
     for layer in base_model.layers[:end]:
         layer.trainable = False
 
     x = base_model.output
     x = GlobalAveragePooling2D()(x)
     x = BatchNormalization()(x)
-    x = Dropout(0.2)(x)
+    x = Dropout(0.15)(x)
     # x = GaussianNoise(0.15)(x)
 
     x = Dense(512, activation="relu", kernel_regularizer=l2(1e-4))(x)
     x = BatchNormalization()(x)
-    x = Dropout(0.3)(x)
+    x = Dropout(0.25)(x)
 
-    x = Dense(256, activation="relu", kernel_regularizer=l2(1e-4))(x)
-    x = BatchNormalization()(x)
-    x = Dropout(0.2)(x)
+    # x = Dense(256, activation="relu", kernel_regularizer=l2(1e-4))(x)
+    # x = BatchNormalization()(x)
+    # x = Dropout(0.2)(x)
 
     # x = Dense(128, activation="relu", kernel_regularizer=l2(1e-4))(x)
     # x = BatchNormalization()(x)
@@ -152,30 +152,30 @@ def create_densenet_model(input_shape, num_classes=3, learning_rate=1e-4):
     # )
     return model
 
-def create_efficientnet_model(input_shape, num_classes=3, learning_rate=1e-4):
+def create_efficientnet_model(input_shape, num_classes=3, learning_rate=5e-5):
 
     inputs = Input(shape=input_shape)
     base_model = EfficientNetB0(weights=None, include_top=False, input_tensor=inputs)
     base_model.load_weights("pretrained_weights/effnetb0_weights.weights.h5")
 
     num_layers = len(base_model.layers)
-    end = int(num_layers * 0.8)
+    end = int(num_layers * 0.7)
     for layer in base_model.layers[:end]:
         layer.trainable = False
 
     x = base_model.output
     x = GlobalAveragePooling2D()(x)
     x = BatchNormalization()(x)
-    x = Dropout(0.2)(x)
+    x = Dropout(0.15)(x)
     # x = GaussianNoise(0.15)(x)
 
-    x = Dense(512, activation="swish", kernel_regularizer=l2(1e-4))(x)
-    x = BatchNormalization()(x)
-    x = Dropout(0.3)(x)
+    # x = Dense(512, activation="swish", kernel_regularizer=l2(1e-4))(x)
+    # x = BatchNormalization()(x)
+    # x = Dropout(0.3)(x)
 
     x = Dense(256, activation="swish", kernel_regularizer=l2(1e-4))(x)
     x = BatchNormalization()(x)
-    x = Dropout(0.2)(x)
+    x = Dropout(0.25)(x)
 
     # x = Dense(128, activation="swish", kernel_regularizer=l2(1e-4))(x)
     # x = BatchNormalization()(x)

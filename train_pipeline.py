@@ -13,22 +13,22 @@ class TrainPipeline:
         self.model = model
     
     def train(self, train_gen, valid_gen, epochs=20):
-        early_stopping = EarlyStopping(monitor='val_loss', patience=8,
-            restore_best_weights=True)
+        early_stopping = EarlyStopping(monitor='val_accuracy', patience=20,
+            restore_best_weights=True, mode='max', verbose=1)
         
         lr_handler = ReduceLROnPlateau(monitor='val_loss', factor=0.5,
-            patience=5, min_lr=5e-6, verbose=1)
+            patience=8, min_lr=1e-7, verbose=1)
 
         history = self.model.fit( train_gen,
                     validation_data=valid_gen,
                     epochs=epochs,
                     callbacks=[early_stopping, lr_handler],
                     verbose=1)
-        y_pred = self.model.predict(valid_gen)
-        y_true = valid_gen.labels
+        # y_pred = self.model.predict(valid_gen)
+        # y_true = valid_gen.labels
 
-        ppo_loss_value = self.ppo_loss(y_true, y_pred)
-        print("\nPPO Loss on Validation Data:", ppo_loss_value.numpy())
+        # ppo_loss_value = self.ppo_loss(y_true, y_pred)
+        # print("\nPPO Loss on Validation Data:", ppo_loss_value.numpy())
 
         self.plot_history(history)
     
