@@ -116,7 +116,7 @@ def create_densenet_model(input_shape, num_classes=3, learning_rate=5e-5):
     base_model.load_weights("pretrained_weights/densenet121_weights.weights.h5")
 
     num_layers = len(base_model.layers)
-    end = int(num_layers * 0.9)
+    end = int(num_layers * 0.95)
     for layer in base_model.layers[:end]:
         layer.trainable = False
 

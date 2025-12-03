@@ -7,7 +7,8 @@ import tensorflow
 def main(): # Test locally with `python main_individual_model.py <model_input_number>`
     print("Num GPUs Available: ", len(tensorflow.config.list_physical_devices('GPU')))
 
-    data_path = "."
+    # data_path = "."
+    data_path = "preprocessed_data"
     categories = ["Normal","Osteopenia", "Osteoporosis"]
     img_size = (224, 224)
     batch_size = 32

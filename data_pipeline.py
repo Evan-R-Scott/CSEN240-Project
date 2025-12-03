@@ -5,22 +5,7 @@ from sklearn.preprocessing import LabelEncoder
 from imblearn.over_sampling import RandomOverSampler
 from sklearn.model_selection import train_test_split
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
-import cv2
 
-def clahe(img):
-    img = img.astype(np.uint8)
-    # CLAHE
-    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    clahe = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(8, 8))
-    cl1 = clahe.apply(gray)
-
-    # Unsharp masking
-    gaussian = cv2.GaussianBlur(cl1, (0,0), 2.0)
-    sharpened_img = cv2.addWeighted(cl1, 1.5, gaussian, -0.5, 0)
-
-    # revert from grayscale to 3-channel
-    norm_img = cv2.cvtColor(sharpened_img, cv2.COLOR_GRAY2BGR)
-    return norm_img.astype(np.float32) / 255 # normalize to 0-1 for generator
 
 class Preprocessor:
     def __init__(self, path , categories):
