@@ -5,7 +5,7 @@ from sklearn.metrics import confusion_matrix, classification_report
 import seaborn as sns
 sns.set_style('darkgrid')
 import matplotlib.pyplot as plt
-
+from sklearn.utils.class_weight import compute_class_weight
 
 
 class TrainPipeline:
@@ -18,11 +18,21 @@ class TrainPipeline:
         
         lr_handler = ReduceLROnPlateau(monitor='val_loss', factor=0.5,
             patience=8, min_lr=1e-7, verbose=1)
+        
+        y = train_gen.classes
+        class_weights = compute_class_weight(
+            class_weight='balanced',
+            classes=np.unique(y),
+            y=y
+        )
+        class_weights = dict(enumerate(class_weights))
+        print("Class weights:", class_weights)
 
         history = self.model.fit( train_gen,
                     validation_data=valid_gen,
                     epochs=epochs,
                     callbacks=[early_stopping, lr_handler],
+                    class_weight=class_weights,
                     verbose=1)
         # y_pred = self.model.predict(valid_gen)
         # y_true = valid_gen.labels
