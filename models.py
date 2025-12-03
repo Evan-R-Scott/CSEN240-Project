@@ -41,27 +41,27 @@ def create_resnet_model(input_shape, num_classes=3, learning_rate=5e-5):
     base_model.load_weights("pretrained_weights/resnet50_weights.weights.h5")
     
     num_layers = len(base_model.layers)
-    end = int(num_layers * 0.7)
+    end = int(num_layers * 0.9)
     for layer in base_model.layers[:end]:
         layer.trainable = False
 
     x = base_model.output
     x = GlobalAveragePooling2D()(x)
     x = BatchNormalization()(x)
-    x = Dropout(0.15)(x)
+    x = Dropout(0.3)(x)
     # x = GaussianNoise(0.15)(x)
 
-    x = Dense(512, activation="relu", kernel_regularizer=l2(1e-4))(x)
-    x = BatchNormalization()(x)
-    x = Dropout(0.25)(x)
+    # x = Dense(512, activation="relu", kernel_regularizer=l2(1e-4))(x)
+    # x = BatchNormalization()(x)
+    # x = Dropout(0.25)(x)
 
     # x = Dense(256, activation="relu", kernel_regularizer=l2(1e-4))(x)
     # x = BatchNormalization()(x)
     # x = Dropout(0.2)(x)
 
-    # x = Dense(128, activation="relu", kernel_regularizer=l2(1e-4))(x)
-    # x = BatchNormalization()(x)
-    # x = Dropout(0.4)(x)
+    x = Dense(128, activation="relu", kernel_regularizer=l2(1e-3))(x)
+    x = BatchNormalization()(x)
+    x = Dropout(0.4)(x)
 
     # focal_loss = CategoricalFocalCrossentropy(gamma=2.0, alpha=0.25)
 
@@ -116,7 +116,7 @@ def create_densenet_model(input_shape, num_classes=3, learning_rate=5e-5):
     base_model.load_weights("pretrained_weights/densenet121_weights.weights.h5")
 
     num_layers = len(base_model.layers)
-    end = int(num_layers * 0.85)
+    end = int(num_layers * 0.9)
     for layer in base_model.layers[:end]:
         layer.trainable = False
 
@@ -130,13 +130,13 @@ def create_densenet_model(input_shape, num_classes=3, learning_rate=5e-5):
     # x = BatchNormalization()(x)
     # x = Dropout(0.25)(x)
 
-    x = Dense(256, activation="relu", kernel_regularizer=l2(1e-3))(x)
+    # x = Dense(256, activation="relu", kernel_regularizer=l2(1e-3))(x)
+    # x = BatchNormalization()(x)
+    # x = Dropout(0.4)(x)
+
+    x = Dense(128, activation="relu", kernel_regularizer=l2(1e-3))(x)
     x = BatchNormalization()(x)
     x = Dropout(0.4)(x)
-
-    # x = Dense(128, activation="relu", kernel_regularizer=l2(1e-4))(x)
-    # x = BatchNormalization()(x)
-    # x = Dropout(0.3)(x)
 
     # x = BatchNormalization()(x)
     outputs = Dense(num_classes, activation="softmax")(x)
@@ -159,23 +159,23 @@ def create_efficientnet_model(input_shape, num_classes=3, learning_rate=5e-5):
     base_model.load_weights("pretrained_weights/effnetb0_weights.weights.h5")
 
     num_layers = len(base_model.layers)
-    end = int(num_layers * 0.7)
+    end = int(num_layers * 0.9)
     for layer in base_model.layers[:end]:
         layer.trainable = False
 
     x = base_model.output
     x = GlobalAveragePooling2D()(x)
     x = BatchNormalization()(x)
-    x = Dropout(0.15)(x)
+    x = Dropout(0.3)(x)
     # x = GaussianNoise(0.15)(x)
 
     # x = Dense(512, activation="swish", kernel_regularizer=l2(1e-4))(x)
     # x = BatchNormalization()(x)
     # x = Dropout(0.3)(x)
 
-    x = Dense(256, activation="swish", kernel_regularizer=l2(1e-4))(x)
+    x = Dense(128, activation="swish", kernel_regularizer=l2(1e-3))(x)
     x = BatchNormalization()(x)
-    x = Dropout(0.25)(x)
+    x = Dropout(0.4)(x)
 
     # x = Dense(128, activation="swish", kernel_regularizer=l2(1e-4))(x)
     # x = BatchNormalization()(x)
