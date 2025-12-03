@@ -121,17 +121,17 @@ def create_densenet_model(input_shape, num_classes=3, learning_rate=1e-4):
     x = GlobalAveragePooling2D()(x)
     x = BatchNormalization()(x)
 
-    # x = Dense(256, activation="relu", kernel_regularizer=l2(5e-4))(x)
-    # x = BatchNormalization()(x)
-    # x = Dropout(0.5)(x)
-
-    x = Dense(128, activation="relu", kernel_regularizer=l2(5e-4))(x)
+    x = Dense(256, activation="relu", kernel_regularizer=l2(5e-4))(x)
     x = BatchNormalization()(x)
     x = Dropout(0.5)(x)
 
-    x = Dense(64, activation="relu", kernel_regularizer=l2(5e-4))(x)
+    x = Dense(128, activation="relu", kernel_regularizer=l2(5e-4))(x)
     x = BatchNormalization()(x)
     x = Dropout(0.4)(x)
+
+    # x = Dense(64, activation="relu", kernel_regularizer=l2(5e-4))(x)
+    # x = BatchNormalization()(x)
+    # x = Dropout(0.4)(x)
 
     outputs = Dense(num_classes, activation="softmax")(x)
 
