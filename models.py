@@ -41,36 +41,37 @@ def create_resnet_model(input_shape, num_classes=3, learning_rate=1e-4):
     base_model.load_weights("pretrained_weights/resnet50_weights.weights.h5")
     
     num_layers = len(base_model.layers)
-    for layer in base_model.layers[:-int(num_layers * 0.4)]:
+    end = int(num_layers * 0.8)
+    for layer in base_model.layers[:end]:
         layer.trainable = False
 
     x = base_model.output
     x = GlobalAveragePooling2D()(x)
     x = BatchNormalization()(x)
-    x = GaussianNoise(0.15)(x)
+    x = Dropout(0.2)(x)
+    # x = GaussianNoise(0.15)(x)
 
     x = Dense(512, activation="relu", kernel_regularizer=l2(1e-4))(x)
     x = BatchNormalization()(x)
-    x = Dropout(0.6)(x)
+    x = Dropout(0.3)(x)
 
     x = Dense(256, activation="relu", kernel_regularizer=l2(1e-4))(x)
     x = BatchNormalization()(x)
-    x = Dropout(0.5)(x)
+    x = Dropout(0.2)(x)
 
-    x = Dense(128, activation="relu", kernel_regularizer=l2(1e-4))(x)
-    x = BatchNormalization()(x)
-    x = Dropout(0.4)(x)
+    # x = Dense(128, activation="relu", kernel_regularizer=l2(1e-4))(x)
+    # x = BatchNormalization()(x)
+    # x = Dropout(0.4)(x)
 
     # focal_loss = CategoricalFocalCrossentropy(gamma=2.0, alpha=0.25)
-    loss = SparseCategoricalCrossentropy()
 
     x = BatchNormalization()(x)
     outputs = Dense(num_classes, activation="softmax")(x)
 
     model = Model(inputs=inputs, outputs=outputs)
-    # "sparse_categorical_crossentropy"
+
     model.compile(
-        optimizer=Adam(learning_rate=learning_rate), loss=loss, metrics=["accuracy"])
+        optimizer=Adam(learning_rate=learning_rate), loss="sparse_categorical_crossentropy", metrics=["accuracy"])
     
     # model.compile(
     #     optimizer=Adam(learning_rate=learning_rate), loss=focal_loss, metrics=["accuracy"]
@@ -93,24 +94,20 @@ def create_vit_model(input_shape, num_classes=3, learning_rate=5e-5):
     x = vit(inputs)
     x = x[:, 0, :]
 
-    x = Dense(1024, activation="relu")(x)
+    x = Dense(512, activation="relu")(x)
     x = BatchNormalization()(x)
     x = Dropout(0.2)(x)
 
-    x = Dense(512, activation="relu")(x)
+    x = Dense(256, activation="relu")(x)
     x = BatchNormalization()(x)
     x = Dropout(0.15)(x)
 
-    x = Dense(256, activation="relu")(x)
-    x = BatchNormalization()(x)
-    x = Dropout(0.1)(x)
     outputs = Dense(num_classes, activation="softmax")(x)
 
-    loss = SparseCategoricalCrossentropy()
 
     model = Model(inputs=inputs, outputs=outputs)
     model.compile(
-        optimizer=Adam(learning_rate=learning_rate), loss=loss, metrics=["accuracy"]
+        optimizer=Adam(learning_rate=learning_rate), loss="sparse_categorical_crossentropy", metrics=["accuracy"]
     )
     return model
 
@@ -120,36 +117,36 @@ def create_densenet_model(input_shape, num_classes=3, learning_rate=1e-4):
     base_model.load_weights("pretrained_weights/densenet121_weights.weights.h5")
 
     num_layers = len(base_model.layers)
-    for layer in base_model.layers[:-int(num_layers * 0.4)]:
+    end = int(num_layers * 0.8)
+    for layer in base_model.layers[:end]:
         layer.trainable = False
 
     x = base_model.output
     x = GlobalAveragePooling2D()(x)
     x = BatchNormalization()(x)
     x = Dropout(0.2)(x)
-    x = GaussianNoise(0.15)(x)
+    # x = GaussianNoise(0.15)(x)
 
     x = Dense(512, activation="relu", kernel_regularizer=l2(1e-4))(x)
     x = BatchNormalization()(x)
-    x = Dropout(0.5)(x)
+    x = Dropout(0.3)(x)
 
     x = Dense(256, activation="relu", kernel_regularizer=l2(1e-4))(x)
     x = BatchNormalization()(x)
-    x = Dropout(0.4)(x)
+    x = Dropout(0.2)(x)
 
-    x = Dense(128, activation="relu", kernel_regularizer=l2(1e-4))(x)
-    x = BatchNormalization()(x)
-    x = Dropout(0.3)(x)
+    # x = Dense(128, activation="relu", kernel_regularizer=l2(1e-4))(x)
+    # x = BatchNormalization()(x)
+    # x = Dropout(0.3)(x)
 
-    x = BatchNormalization()(x)
+    # x = BatchNormalization()(x)
     outputs = Dense(num_classes, activation="softmax")(x)
 
     # focal_loss = CategoricalFocalCrossentropy(gamma=2.0, alpha=0.25)
-    loss = SparseCategoricalCrossentropy()
 
     model = Model(inputs=inputs, outputs=outputs)
     model.compile(
-        optimizer=Adam(learning_rate=learning_rate), loss=loss, metrics=["accuracy"]
+        optimizer=Adam(learning_rate=learning_rate), loss="sparse_categorical_crossentropy", metrics=["accuracy"]
     )
     # model.compile(
     #     optimizer=Adam(learning_rate=learning_rate), loss=focal_loss, metrics=["accuracy"]
@@ -163,35 +160,35 @@ def create_efficientnet_model(input_shape, num_classes=3, learning_rate=1e-4):
     base_model.load_weights("pretrained_weights/efficientnetb0_weights.weights.h5")
 
     num_layers = len(base_model.layers)
-    for layer in base_model.layers[:-int(num_layers * 0.2)]:
+    end = int(num_layers * 0.8)
+    for layer in base_model.layers[:end]:
         layer.trainable = False
 
     x = base_model.output
     x = GlobalAveragePooling2D()(x)
     x = BatchNormalization()(x)
-    x = GaussianNoise(0.15)(x)
+    x = Dropout(0.2)(x)
+    # x = GaussianNoise(0.15)(x)
 
     x = Dense(512, activation="swish", kernel_regularizer=l2(1e-4))(x)
     x = BatchNormalization()(x)
-    x = Dropout(0.5)(x)
+    x = Dropout(0.3)(x)
 
     x = Dense(256, activation="swish", kernel_regularizer=l2(1e-4))(x)
     x = BatchNormalization()(x)
-    x = Dropout(0.4)(x)
+    x = Dropout(0.2)(x)
 
-    x = Dense(128, activation="swish", kernel_regularizer=l2(1e-4))(x)
-    x = BatchNormalization()(x)
-    x = Dropout(0.3)(x)
-
-    x = BatchNormalization()(x)
+    # x = Dense(128, activation="swish", kernel_regularizer=l2(1e-4))(x)
+    # x = BatchNormalization()(x)
+    # x = Dropout(0.3)(x)
+    # x = BatchNormalization()(x)
     outputs = Dense(num_classes, activation="softmax")(x)
 
     # focal_loss = CategoricalFocalCrossentropy(gamma=2.0, alpha=0.25)
-    loss = SparseCategoricalCrossentropy()
 
     model = Model(inputs=inputs, outputs=outputs)
     model.compile(
-        optimizer=Adam(learning_rate=learning_rate), loss=loss, metrics=["accuracy"]
+        optimizer=Adam(learning_rate=learning_rate), loss="sparse_categorical_crossentropy", metrics=["accuracy"]
     )
     # model.compile(
     #     optimizer=Adam(learning_rate=learning_rate), loss=focal_loss, metrics=["accuracy"]
