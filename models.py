@@ -86,7 +86,7 @@ def create_vit_model(input_shape, num_classes=3, learning_rate=5e-5):
     # vit.trainable = False
 
     for i, layer in enumerate(vit.layers):
-        if i < len(vit.layers) * 0.8:
+        if i < len(vit.layers) * 0.5:
             layer.trainable = False
 
     inputs = Input(shape=input_shape)
@@ -95,11 +95,11 @@ def create_vit_model(input_shape, num_classes=3, learning_rate=5e-5):
     
     x = LayerNormalization(epsilon=1e-6)(x)
     x = Dense(256, activation="gelu")(x)
-    x = Dropout(0.3)(x)
+    x = Dropout(0.4)(x)
 
     x = LayerNormalization(epsilon=1e-6)(x)
     x = Dense(128, activation="gelu")(x)
-    x = Dropout(0.3)(x)
+    x = Dropout(0.4)(x)
 
     outputs = Dense(num_classes, activation="softmax")(x)
 

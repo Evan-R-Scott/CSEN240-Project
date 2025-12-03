@@ -148,7 +148,7 @@ class Preprocessor:
         df = self.load_data("train")
         self.show_data(df)
         df = self.encode_labels(df)
-        #df = self.balance_data(df)
+        df = self.balance_data(df)
         train_df, test_df = train_test_split(
             df,
             train_size=0.9,
@@ -158,9 +158,9 @@ class Preprocessor:
         )
         val_df = self.load_data("val")
         val_df = self.encode_labels(val_df)
-        train_df['category_encoded'] = train_df['category_encoded'].astype(str)
+        # train_df['category_encoded'] = train_df['category_encoded'].astype(str)
         val_df['category_encoded'] = val_df['category_encoded'].astype(str)
-        test_df['category_encoded'] = test_df['category_encoded'].astype(str)
+        # test_df['category_encoded'] = test_df['category_encoded'].astype(str)
 
         train_gen, valid_gen, test_gen = self.create_generators(train_df, val_df, test_df, img_size=img_size, batch_size=batch_size)
         return train_gen, valid_gen, test_gen
