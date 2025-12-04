@@ -108,13 +108,13 @@ def create_vit_model(input_shape, num_classes=3, learning_rate=5e-5):
     )
     return model
 
-def create_densenet_model(input_shape, num_classes=3, learning_rate=2e-5):
+def create_densenet_model(input_shape, num_classes=3, learning_rate=5e-5):
     inputs = Input(shape=input_shape)
     base_model = DenseNet121(weights=None, include_top=False, input_tensor=inputs)
     base_model.load_weights("pretrained_weights/densenet121_weights.weights.h5")
 
     num_layers = len(base_model.layers)
-    end = int(num_layers * 0.8)
+    end = int(num_layers * 0.85)
     for layer in base_model.layers[:end]:
         layer.trainable = False
 
@@ -124,7 +124,7 @@ def create_densenet_model(input_shape, num_classes=3, learning_rate=2e-5):
     x = Dropout(0.4)(x)
     # x = GaussianNoise(0.15)(x)
 
-    x = Dense(256, activation="relu")(x)
+    x = Dense(128, activation="relu")(x)
     x = BatchNormalization()(x)
     x = Dropout(0.4)(x)
 
