@@ -54,29 +54,6 @@ class Preprocessor:
         print(df_resampled)
         df_resampled['category_encoded'] = df_resampled['category_encoded'].astype(str)
         return df_resampled
-    
-    # def split_data(self, df):
-    #     train_df_new, temp_df_new = train_test_split(
-    #         df,
-    #         train_size=0.8,
-    #         shuffle=True,
-    #         random_state=42,
-    #         stratify=df['category_encoded']
-    #     )
-    #     print(train_df_new.shape)
-    #     print(temp_df_new.shape)
-
-    #     valid_df_new, test_df_new = train_test_split(
-    #         temp_df_new,
-    #         test_size=0.5,
-    #         shuffle=True,
-    #         random_state=42,
-    #         stratify=temp_df_new['category_encoded']
-    #     )
-    #     print(valid_df_new.shape)
-    #     print(test_df_new.shape)
-
-    #     return train_df_new, valid_df_new, test_df_new
 
     def create_generators(self, train_df, valid_df, test_df, img_size, batch_size):
         # tr_gen = ImageDataGenerator(
@@ -89,20 +66,7 @@ class Preprocessor:
         #     horizontal_flip=True,
         #     fill_mode="nearest"
         #     )
-        # tr_gen = ImageDataGenerator(rescale=1./255)
-        # ts_gen = ImageDataGenerator(rescale=1./255)
-        # tr_gen = ImageDataGenerator(preprocessing_function=clahe)
-        # ts_gen = ImageDataGenerator(preprocessing_function=clahe)
         tr_gen = ImageDataGenerator(rescale=1./255)
-        # tr_gen = ImageDataGenerator(
-        #     rescale=1./255,
-        #     rotation_range=15,
-        #     width_shift_range=0.1,
-        #     height_shift_range=0.1,
-        #     zoom_range=0.15,
-        #     brightness_range=[0.8, 1.2],
-        #     horizontal_flip=True,
-        # )
         ts_gen = ImageDataGenerator(rescale=1./255)
         
         train_gen_new = tr_gen.flow_from_dataframe(
@@ -158,9 +122,7 @@ class Preprocessor:
         )
         val_df = self.load_data("val")
         val_df = self.encode_labels(val_df)
-        # train_df['category_encoded'] = train_df['category_encoded'].astype(str)
         val_df['category_encoded'] = val_df['category_encoded'].astype(str)
-        # test_df['category_encoded'] = test_df['category_encoded'].astype(str)
 
         train_gen, valid_gen, test_gen = self.create_generators(train_df, val_df, test_df, img_size=img_size, batch_size=batch_size)
         return train_gen, valid_gen, test_gen

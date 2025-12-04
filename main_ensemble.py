@@ -1,7 +1,6 @@
 from models import get_model
 from data_pipeline import Preprocessor
 from train_pipeline import TrainPipeline
-import sys
 import tensorflow
 import numpy as np
 from sklearn.metrics import confusion_matrix, classification_report

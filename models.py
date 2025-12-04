@@ -3,7 +3,7 @@
 Add new or variations of models here as funcs.
 """
 
-from tensorflow.keras.applications import Xception, ResNet50, DenseNet121, EfficientNetB0
+from tensorflow.keras.applications import Xception, ResNet50, DenseNet121, EfficientNetB0, EfficientNetB4
 from tensorflow.keras.models import Model
 from tensorflow.keras.layers import (Input, GlobalAveragePooling2D, Dense, Dropout, BatchNormalization, GaussianNoise, MultiHeadAttention, Reshape, LayerNormalization)
 from tensorflow.keras.optimizers import Adam, AdamW
@@ -82,8 +82,6 @@ def create_vit_model(input_shape, num_classes=3, learning_rate=5e-5):
     import keras_hub
 
     vit = keras_hub.models.ViTBackbone.from_preset("vit_large_patch16_224_imagenet")
-    # vit_base_patch16_224_imagenet
-    # vit.trainable = False
 
     for i, layer in enumerate(vit.layers):
         if i < len(vit.layers) * 0.5:
@@ -152,35 +150,36 @@ def create_densenet_model(input_shape, num_classes=3, learning_rate=2e-5):
     # )
     return model
 
-def create_efficientnet_model(input_shape, num_classes=3, learning_rate=5e-5):
+def create_efficientnet_model(input_shape, num_classes=3, learning_rate=1e-3):
 
     inputs = Input(shape=input_shape)
-    base_model = EfficientNetB0(weights=None, include_top=False, input_tensor=inputs)
-    base_model.load_weights("pretrained_weights/effnetb0_weights.weights.h5")
+    # base_model = EfficientNetB0(weights=None, include_top=False, input_tensor=inputs)
+    base_model = EfficientNetB4(weights=None, include_top=False, input_tensor=inputs)
+    # base_model.load_weights("pretrained_weights/effnetb0_weights.weights.h5")
 
-    num_layers = len(base_model.layers)
-    end = int(num_layers * 0.9)
-    for layer in base_model.layers[:end]:
-        layer.trainable = False
+    base_model.trainable = True
+    # num_layers = len(base_model.layers)
+    # end = int(num_layers * 0.9)
+    # for layer in base_model.layers[:end]:
+    #     layer.trainable = False
 
     x = base_model.output
     x = GlobalAveragePooling2D()(x)
     x = BatchNormalization()(x)
     x = Dropout(0.3)(x)
-    # x = GaussianNoise(0.15)(x)
 
-    # x = Dense(512, activation="swish", kernel_regularizer=l2(1e-4))(x)
-    # x = BatchNormalization()(x)
-    # x = Dropout(0.3)(x)
-
-    x = Dense(128, activation="swish", kernel_regularizer=l2(1e-3))(x)
+    x = Dense(512, activation="swish", kernel_regularizer=l2(1e-4))(x)
     x = BatchNormalization()(x)
     x = Dropout(0.4)(x)
 
-    # x = Dense(128, activation="swish", kernel_regularizer=l2(1e-4))(x)
-    # x = BatchNormalization()(x)
-    # x = Dropout(0.3)(x)
-    # x = BatchNormalization()(x)
+    x = Dense(256, activation="swish", kernel_regularizer=l2(1e-4))(x)
+    x = BatchNormalization()(x)
+    x = Dropout(0.3)(x)
+
+    x = Dense(128, activation="swish", kernel_regularizer=l2(1e-4))(x)
+    x = BatchNormalization()(x)
+    x = Dropout(0.3)(x)
+
     outputs = Dense(num_classes, activation="softmax")(x)
 
     # focal_loss = CategoricalFocalCrossentropy(gamma=2.0, alpha=0.25)
@@ -194,6 +193,34 @@ def create_efficientnet_model(input_shape, num_classes=3, learning_rate=5e-5):
     # )
     return model
 
+def create_densenet_model_untrained(input_shape, num_classes=3, learning_rate=1e-3):
+    inputs = Input(shape=input_shape)
+    base_model = DenseNet121(weights=None, include_top=False, input_tensor=inputs)
+    #base_model.load_weights("pretrained_weights/densenet121_weights.weights.h5")
+
+    base_model.trainable = True
+
+    x = base_model.output
+    x = GlobalAveragePooling2D()(x)
+    x = BatchNormalization()(x)
+    x = Dropout(0.3)(x)
+
+    x = Dense(256, activation="relu", kernel_regularizer=l2(1e-4))(x)
+    x = BatchNormalization()(x)
+    x = Dropout(0.4)(x)
+
+    x = Dense(128, activation="relu", kernel_regularizer=l2(1e-4))(x)
+    x = BatchNormalization()(x)
+    x = Dropout(0.3)(x)
+
+    outputs = Dense(num_classes, activation="softmax")(x)
+
+    model = Model(inputs=inputs, outputs=outputs)
+    model.compile(
+        optimizer=Adam(learning_rate=learning_rate), loss="sparse_categorical_crossentropy", metrics=["accuracy"]
+    )
+    return model
+
 def get_model(input, input_shape):
     model_options = {
         "1": create_xception_model,
@@ -201,6 +228,7 @@ def get_model(input, input_shape):
         "3": create_vit_model, 
         "4": create_densenet_model,
         "5": create_efficientnet_model,
+        "6": create_densenet_model_untrained,
         #TODO List new or variations of models here
     }
 
