@@ -5,7 +5,8 @@ Doesn't download the modelfile so right now it is a run-and-done workflow. Not s
 1. ssh (your SCU username)@login.wave.scu.edu
 2. git clone https://github.com/Evan-R-Scott/CSEN240-Project.git
 3. cd CSEN240-Project/
-4. `sbatch single_slurm.sh` to run 1 model || `sbatch ensemble_slurm.sh` to run ensemble of models
+4. Update SLURM detail in single_slurm.sh to include your email to work (line 14)
+5. `sbatch single_slurm.sh` to run 1 model || `sbatch ensemble_slurm.sh` to run ensemble of models
 
 Check progress using commands like:
 
