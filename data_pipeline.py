@@ -32,7 +32,8 @@ class Preprocessor:
 
         return df
 
-    def show_data(self, df):
+    def show_data(self, df, name=""):
+        print(f"\n=== {name} Data Info ===")
         print(df.duplicated().sum())
         print(df.isnull().sum())
         print(df.info())
@@ -115,20 +116,39 @@ class Preprocessor:
         return train_gen_new, valid_gen_new, test_gen_new
     
     def preprocess(self, img_size=(224,224), batch_size=16):
-        df = self.load_data("train")
-        self.show_data(df)
-        df = self.encode_labels(df)
-        df = self.balance_data(df)
-        train_df, test_df = train_test_split(
-            df,
-            train_size=0.9,
-            shuffle=True,
-            random_state=42,
-            stratify=df['category_encoded']
+        train_df = self.load_data("train")
+        self.show_data(train_df, "Train (raw)")
+        
+        valid_df = self.load_data("val")
+        self.show_data(valid_df, "Validation (raw)")
+        
+        test_df = self.load_data("test")
+        self.show_data(test_df, "Test (raw)")
+        
+        # Encode labels using consistent mapping
+        train_df = self.encode_labels(train_df)
+        valid_df = self.encode_labels(valid_df)
+        test_df = self.encode_labels(test_df)
+        
+        # Only balance the training data
+        # train_df = self.balance_data(train_df)
+        # df = self.load_data("train")
+        # self.show_data(df)
+        # df = self.encode_labels(df)
+        # df = self.balance_data(df)
+        # train_df, test_df = train_test_split(
+        #     df,
+        #     train_size=0.9,
+        #     shuffle=True,
+        #     random_state=42,
+        #     stratify=df['category_encoded']
+        # )
+        # val_df = self.load_data("val")
+        # val_df = self.encode_labels(val_df)
+        # val_df['category_encoded'] = val_df['category_encoded'].astype(str)
+        train_gen, valid_gen, test_gen = self.create_generators(
+            train_df, valid_df, test_df, 
+            img_size=img_size, 
+            batch_size=batch_size
         )
-        val_df = self.load_data("val")
-        val_df = self.encode_labels(val_df)
-        val_df['category_encoded'] = val_df['category_encoded'].astype(str)
-
-        train_gen, valid_gen, test_gen = self.create_generators(train_df, val_df, test_df, img_size=img_size, batch_size=batch_size)
         return train_gen, valid_gen, test_gen
