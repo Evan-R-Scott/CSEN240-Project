@@ -12,6 +12,7 @@ class Preprocessor:
         self.categories = categories
         self.label_encoder = None
         self.target_names = None
+        self.class_to_index = {cat: idx for idx, cat in enumerate(categories)}
     
     def load_data(self, path):
         image_paths = []
@@ -39,9 +40,11 @@ class Preprocessor:
         print("Label counts: {}".format(df['label'].value_counts()))
     
     def encode_labels(self, df):
-        self.label_encoder = LabelEncoder()
-        df['category_encoded'] = self.label_encoder.fit_transform(df['label'])
+        df['category_encoded'] = df['label'].map(self.class_to_index).astype(str)
         return df[['image_path', 'category_encoded']]
+        # self.label_encoder = LabelEncoder()
+        # df['category_encoded'] = self.label_encoder.fit_transform(df['label'])
+        # return df[['image_path', 'category_encoded']]
     
     def balance_data(self, df):
         ros = RandomOverSampler(random_state=42)
@@ -78,7 +81,8 @@ class Preprocessor:
             # class_mode='categorical',
             color_mode='rgb',
             shuffle=True,
-            batch_size=batch_size
+            batch_size=batch_size,
+            classes=['0', '1', '2']
         )
 
         valid_gen_new = ts_gen.flow_from_dataframe(
@@ -90,7 +94,8 @@ class Preprocessor:
             # class_mode='categorical',
             color_mode='rgb',
             shuffle=True,
-            batch_size=batch_size
+            batch_size=batch_size,
+            classes=['0', '1', '2']
         )
 
         test_gen_new = ts_gen.flow_from_dataframe(
@@ -102,7 +107,8 @@ class Preprocessor:
             # class_mode='categorical',
             color_mode='rgb',
             shuffle=False,
-            batch_size=batch_size
+            batch_size=batch_size,
+            classes=['0', '1', '2']
         )
 
         self.target_names = test_gen_new.class_indices
