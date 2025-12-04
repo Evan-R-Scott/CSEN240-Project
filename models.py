@@ -155,13 +155,13 @@ def create_efficientnet_model(input_shape, num_classes=3, learning_rate=1e-3):
     inputs = Input(shape=input_shape)
     # base_model = EfficientNetB0(weights=None, include_top=False, input_tensor=inputs)
     base_model = EfficientNetB4(weights=None, include_top=False, input_tensor=inputs)
-    # base_model.load_weights("pretrained_weights/effnetb0_weights.weights.h5")
+    base_model.load_weights("pretrained_weights/effnetb4_weights.weights.h5")
 
-    base_model.trainable = True
-    # num_layers = len(base_model.layers)
-    # end = int(num_layers * 0.9)
-    # for layer in base_model.layers[:end]:
-    #     layer.trainable = False
+    #base_model.trainable = True
+    num_layers = len(base_model.layers)
+    end = int(num_layers * 0.9)
+    for layer in base_model.layers[:end]:
+        layer.trainable = False
 
     x = base_model.output
     x = GlobalAveragePooling2D()(x)
