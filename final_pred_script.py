@@ -30,7 +30,7 @@ def main(): # Test locally with `python final_pred_script.py <model_input_number
     if model is None:
         sys.exit("Please provide a valid model input argument.")
     
-    model.load_weights("best_model_weights.h5")
+    model.load_weights("best_model_weights.weights.h5")
 
     preprocessor = Preprocessor(data_path, categories)
     train_gen, valid_gen, test_gen = preprocessor.preprocess(img_size=img_size, batch_size=batch_size)

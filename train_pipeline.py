@@ -30,7 +30,7 @@ class TrainPipeline:
         # ppo_loss_value = self.ppo_loss(y_true, y_pred)
         # print("\nPPO Loss on Validation Data:", ppo_loss_value.numpy())
 
-        self.model.save_weights("best_model_weights.h5")
+        self.model.save_weights("best_model_weights.weights.h5")
 
         self.plot_history(history)
     
